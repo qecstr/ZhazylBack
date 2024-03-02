@@ -15,7 +15,7 @@ class Patients(Base):
     name = Column(types.TEXT,index = True)
     surname = Column(types.TEXT,index=True)
     dateOfBirth = Column(types.DATE, index= True)
-
+    otp = Column(types.TEXT,index=True)
 
 
 class Doctors(Base):
@@ -30,7 +30,7 @@ class Doctors(Base):
     name = Column(types.TEXT,index = True)
     surname = Column(types.TEXT,index=True)
     email_confirmation = Column(types.TEXT, index=True)
-
+    otp = Column(types.TEXT,index=True)
 
 
 

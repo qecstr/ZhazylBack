@@ -41,3 +41,6 @@ class Response(GenericModel, Generic[T]):
     status: str
     message: str
     result: Optional[T]
+
+class Number(BaseModel):
+    number: int

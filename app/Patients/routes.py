@@ -1,4 +1,7 @@
+import json
 
+from httpx import AsyncClient
+import requests
 from app.schemas import patients_json, Response
 from fastapi import APIRouter
 from fastapi import Depends
@@ -77,4 +80,38 @@ async def isExists(temp :d_check, db:db_dependency):
 @router.post("/doctors/changePassword/{login}/{newPassword}")
 async def changePatientsPassword(login: str,newPassword:str,db: db_dependency):
     d_crud.changePassword(login,newPassword,db)
+
+
+
+#не рабочее
+
+API = "196545763551645"
+URL = "https://graph.facebook.com/v18.0/237284509471319/messages"
+client = AsyncClient()
+
+@router.get("/sendMesage")
+async def sendMessage():
+    temp = {"name": "hello_world",
+            "language": {
+                "code": "en_US"
+            }}
+
+    data = {
+    "messaging_product": "whatsapp",
+    "to": "787718186663",
+    "type": "template",
+    "template": {
+        "name": "hello_world",
+        "language": {
+            "code": "en_US"
+        }
+    }
+}
+
+    print(json.dumps(data, indent=4))
+    t = json.dumps(data)
+    print(data)
+    headers = {"Authorization": "EAATZCc3Y9atgBOwU7ioPjdXWklOYqoN6p3kIUYhcySS739cIIVtBOedzgxf7Ii9fS05OU6aoNWAcVwZBCWxQyyBaAh3KDLzqepMmA5WcFnCP9oa75gYKFuDmGqnOZATwDPI6CLI9lu7QHBTFXBPBFsTUi9GH9nslOgZBjJZChcK1bbj5Y0PSPy4SZBiXBZB8SdvhpiFM8W51aZABmR1vNAcAMYj8jPkZD"}
+    return requests.post(url=URL,data=t,headers=headers).json()
+
 

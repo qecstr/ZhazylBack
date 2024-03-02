@@ -31,3 +31,6 @@ class Doctors(Base):
     surname = Column(types.TEXT,index=True)
     email_confirmation = Column(types.TEXT, index=True)
 
+
+
+

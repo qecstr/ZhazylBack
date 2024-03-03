@@ -1,5 +1,5 @@
 import datetime
-from typing import ClassVar, Generic, Optional, TypeVar
+from typing import ClassVar, Generic, Optional, TypeVar, Union
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic.v1.generics import GenericModel
@@ -13,28 +13,22 @@ class BaseModel(PydanticBaseModel):
 class patients_json(BaseModel):
     INN :int
     phone : int
-    login : str
-    email : str
     password : str
     name : str
     surname : str
-    dateOfBirth : datetime.date
 
 class p_check(BaseModel):
-    login: str
+    phone: str
     password: str
 class doctors_json(BaseModel):
     IIN : int
     phone : int
-    login : str
-    email : str
     password : str
     name : str
     surname : str
-    email_confirmation : str
 
 class d_check(BaseModel):
-    login: str
+    phone: str
     password: str
 class Response(GenericModel, Generic[T]):
     code: str
@@ -44,3 +38,15 @@ class Response(GenericModel, Generic[T]):
 
 class Number(BaseModel):
     number: int
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    phone: Union[str, None] = None
+class changePass(BaseModel):
+    phone: str
+    password: str
+    newPassword: str

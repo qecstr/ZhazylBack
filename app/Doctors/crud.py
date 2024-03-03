@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models import Doctors
 from app.schemas import doctors_json
 from app.schemas import d_check
+import app.OAuth2Config as Auth
 def get_Doctors_by_id(id:int,db:Session):
     return db.query(Doctors).filter(Doctors.id == id).first()
 
@@ -13,12 +14,9 @@ def register_Doctor(dj: doctors_json,db:Session):
     temp = Doctors(
         IIN = dj.IIN,
         phone = dj.phone,
-        login = dj.login,
-        email = dj.email,
-        password = dj.password,
+        password = Auth.get_password_hash(dj.password),
         name = dj.name,
         surname = dj.surname,
-        dateOfBirth = dj.dateOfBirth
     )
     db.add(temp)
     db.commit()

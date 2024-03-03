@@ -1,16 +1,19 @@
-
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from starlette import status
+from app.schemas import changePass
 from app.schemas import patients_json, Response
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi import Depends
 from app.database import SessionLocal
 from sqlalchemy.orm import Session
 from typing import Annotated
 from app.schemas import doctors_json ,  p_check,d_check, Number
-
+import app.OAuth2Config as Auth
 import app.whatsappConfigs as whatsapp
 from app.Doctors import crud as d_crud
 from app.Patients import crud as p_crud
-
+from app.schemas import Token
 router = APIRouter()
 
 
@@ -46,9 +49,9 @@ async def isExists(temp :p_check, db:db_dependency):
                     code="200",
                     message="User exists").dict(exclude_none=True)
 
-@router.post("/patients/changePassword/{login}/{newPassword}")
-async def changePatientsPassword(login: str,newPassword:str,db: db_dependency):
-    p_crud.changePassword(login,newPassword,db)
+@router.post("/patients/changePassword")
+async def changePatientsPassword(temp:changePass,db: db_dependency):
+    p_crud.changePassword(temp,db)
 
 #for doctors
 
@@ -77,8 +80,8 @@ async def isExists(temp :d_check, db:db_dependency):
 
 
 @router.post("/doctors/changePassword/{login}/{newPassword}")
-async def changePatientsPassword(login: str,newPassword:str,db: db_dependency):
-    d_crud.changePassword(login,newPassword,db)
+async def changePatientsPassword(temp:changePass,db: db_dependency):
+    d_crud.changePassword(temp,db)
 
 
 
@@ -97,3 +100,30 @@ async def send(phonenumber:Number):
    print(phonenumber.number)
    return whatsapp.sendMessage(number=phonenumber.number)
 
+
+
+@router.post("/token")
+async def login_for_access_token(
+    patient:p_check,
+    db:db_dependency
+) -> Token:
+    user = Auth.authenticate_user(patient,db)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token = Auth.create_access_token(
+        patient
+    )
+    return Token(access_token=access_token, token_type="bearer")
+
+
+
+@router.get("/users/me/", response_model=p_check)
+async def read_users_me(
+    current_user: Annotated[p_check, Depends(Auth.get_current_active_user)]
+):
+    return current_user

@@ -50,3 +50,19 @@ class changePass(BaseModel):
     phone: str
     password: str
     newPassword: str
+
+class PatienceProfileJson(BaseModel):
+    phone: int
+    INN: int
+    name: str
+    surname: str
+    dateOfBirth: datetime
+    sex: str
+
+class DoctorsProfileJson(BaseModel):
+    name: str
+    surname: str
+    clinic: str
+    experience: str
+    graphic: str
+    payment: str

@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  app:
+
+    build: ./
+
+    depends_on:
+     - db
+    command: 'uvicorn app.main:app --host 0.0.0.0 --port 8050'
+    volumes:
+      - ./app:/src/app
+    ports:
+      - "8050:8050"
+    restart: always
+    env_file:
+      - .env
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    ports:
+      - "5431:5432"
+    volumes:
+      - .postgres:/var/lib/postgres/data
+    restart: always
